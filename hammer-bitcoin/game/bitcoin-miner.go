@@ -3,8 +3,6 @@ package game
 import (
 	"bufio"
 	"fmt"
-	"github.com/eiannone/keyboard"
-	"github.com/fatih/color"
 	"log"
 	"math/rand"
 	"os"
@@ -13,6 +11,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/eiannone/keyboard"
+	"github.com/fatih/color"
 )
 
 // OGH is how we address the player
