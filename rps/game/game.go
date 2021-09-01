@@ -38,12 +38,18 @@ func (g *Game) Rounds() {
 			g.RoundChannel <- 0
 		case print := <-g.DisplayChan:
 			fmt.Print(print)
+			g.DisplayChan <- ""
 		}
 	}
 }
 
 func (g *Game) PlayRound() bool {
 	rand.Seed(time.Now().UnixNano())
+	g.DisplayChan <- fmt.Sprintf(`
+Round: %d
+---------
+`, g.Round.RoundNumber)
+	<-g.DisplayChan
 
 	g.Instruction()
 	playerChoice, _ := reader.ReadString('\n')
@@ -63,14 +69,18 @@ func (g *Game) PlayRound() bool {
 	fmt.Println()
 
 	g.DisplayChan <- fmt.Sprintf("Player chosen %s\n", playerChoice)
+	<-g.DisplayChan
 
 	switch computerValue {
 	case ROCK:
 		g.DisplayChan <- "Computer chose ROCK"
+		<-g.DisplayChan
 	case PAPER:
 		g.DisplayChan <- "Computer chose PAPER"
+		<-g.DisplayChan
 	case SCISSORS:
 		g.DisplayChan <- "Computer chose SCISSORS"
+		<-g.DisplayChan
 	default:
 	}
 
@@ -104,6 +114,7 @@ func (g *Game) PlayRound() bool {
 			}
 		default:
 			g.DisplayChan <- "Invalid!"
+			<-g.DisplayChan
 			return false
 		}
 	}
@@ -113,6 +124,7 @@ func (g *Game) PlayRound() bool {
 
 func (g *Game) Instruction() {
 	g.DisplayChan <- "Please enter rock, paper, or scissors ->"
+	<-g.DisplayChan
 }
 func (g *Game) ClearScreen() {
 	if strings.Contains(runtime.GOOS, "windows") {
@@ -130,8 +142,12 @@ func (g *Game) ClearScreen() {
 
 func (g *Game) Results() {
 	fmt.Println()
-	fmt.Println("--- --- ---")
-	g.DisplayChan <- fmt.Sprintf("Final score: Player: %d and Computer %d\n", g.Round.PlayerScore, g.Round.ComputerScore)
+	g.DisplayChan <- fmt.Sprintf(`
+--- --- ---
+Final score: Player: %d and Computer %d
+`, g.Round.PlayerScore, g.Round.ComputerScore)
+	<-g.DisplayChan
+
 	if g.Round.ComputerScore > g.Round.PlayerScore {
 		g.ComputerWins()
 	} else {
@@ -139,21 +155,26 @@ func (g *Game) Results() {
 	}
 }
 func (g *Game) PrintIntro() {
-	fmt.Println("Rock, Paper & Scissors")
-	fmt.Println("--- --- ---")
-	fmt.Println("Game is played for three rounds, and best of three wins the game. Good luck!")
-	fmt.Println()
+	g.DisplayChan <- `
+Rock, Paper & Scissors
+--- --- ---
+Game is played for three rounds, and best of three wins the game. Good luck!
+`
+	<-g.DisplayChan
 }
 func (g *Game) PlayerWins() {
-	g.DisplayChan <- "Player wins!\n"
+	g.DisplayChan <- "Player wins!\n\n"
+	<-g.DisplayChan
 	g.Round.PlayerScore++
 }
 
 func (g *Game) ComputerWins() {
-	g.DisplayChan <- "Computer wins!\n"
+	g.DisplayChan <- "Computer wins!\n\n"
+	<-g.DisplayChan
 	g.Round.ComputerScore++
 }
 
 func (g *Game) Draw() {
-	g.DisplayChan <- "It's a draw\n"
+	g.DisplayChan <- "It's a draw\n\n"
+	<-g.DisplayChan
 }
