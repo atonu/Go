@@ -14,8 +14,14 @@ const (
 	DRAW         = 3
 )
 
+var messages = [][]string{
+	{"Good job!", "Congrats!", "Cool!"},
+	{"Gotcha!", "Take a Bow!", "I > U"},
+	{"Heck!", "We think alike", "We're the same"},
+}
+
 type Round struct {
-	Winner         int    `json:"winner"`
+	Winner         string `json:"message"`
 	ComputerChoice string `json:"computer_choice"`
 	Result         string `json:"round_result"`
 }
@@ -27,7 +33,7 @@ func PlayRound(playerValue int) Round {
 	computerValue := rand.Intn(3)
 	computerChoice := ""
 	roundResult := ""
-	winner := 0
+	winner := ""
 
 	switch computerValue {
 	case ROCK:
@@ -41,13 +47,14 @@ func PlayRound(playerValue int) Round {
 
 	if playerValue == computerValue {
 		roundResult = "It's a draw"
-		winner = DRAW
+		winner = messages[2][rand.Intn(len(messages[2]))]
 	} else if playerValue == (computerValue+1)%3 {
 		roundResult = "Player Wins!"
-		winner = PLAYERWINS
+		winner = messages[0][rand.Intn(len(messages[0]))]
+
 	} else {
 		roundResult = "ComputerWins"
-		winner = COMPUTERWINS
+		winner = messages[1][rand.Intn(len(messages[1]))]
 	}
 
 	round := Round{
