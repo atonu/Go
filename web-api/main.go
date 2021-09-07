@@ -5,6 +5,7 @@ import (
 	"log"
 	"myapp/rps"
 	"net/http"
+	"strconv"
 	"text/template"
 )
 
@@ -22,13 +23,13 @@ func renderTemplate(w http.ResponseWriter, page string) {
 }
 
 func playRound(w http.ResponseWriter, r *http.Request) {
-	result := rps.PlayRound(1)
+	playerChoice, _ := strconv.Atoi(r.URL.Query().Get("c"))
+	result := rps.PlayRound(playerChoice)
 	out, err := json.MarshalIndent(result, "", "   ")
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	log.Println(result)
 	w.Header().Set("Content-type", "application/json")
 	w.Write(out)
 }
