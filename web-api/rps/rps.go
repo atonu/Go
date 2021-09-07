@@ -21,7 +21,7 @@ var messages = [][]string{
 }
 
 type Round struct {
-	Winner         string `json:"message"`
+	Message        string `json:"message"`
 	ComputerChoice string `json:"computer_choice"`
 	Result         string `json:"round_result"`
 }
@@ -58,7 +58,7 @@ func PlayRound(playerValue int) Round {
 	}
 
 	round := Round{
-		Winner:         winner,
+		Message:        winner,
 		ComputerChoice: computerChoice,
 		Result:         roundResult,
 	}
