@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
+	"myapp/rps"
 	"net/http"
 	"text/template"
 )
@@ -20,17 +21,25 @@ func renderTemplate(w http.ResponseWriter, page string) {
 	}
 }
 
-func HomePage(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "index.html")
+func playRound(w http.ResponseWriter, r *http.Request) {
+	result := rps.PlayRound(1)
+	out, err := json.MarshalIndent(result, "", "   ")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(result)
+	w.Header().Set("Content-type", "application/json")
+	w.Write(out)
 }
 
-func test(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("content-type", "text/html")
-	fmt.Fprint(w, "<strong>route made </strong>")
-}
 func main() {
 	http.HandleFunc("/", HomePage)
-	http.HandleFunc("/test", test)
+	http.HandleFunc("/play", playRound)
 	log.Println("Started web server on 8080")
 	http.ListenAndServe(":8080", nil)
+}
+
+func HomePage(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "index.html")
 }

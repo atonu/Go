@@ -90,33 +90,42 @@ Round: %d
 		g.Draw()
 		return false
 	} else {
-		switch playerValue {
-
-		case ROCK:
-			if computerValue == PAPER {
-				g.ComputerWins()
-			} else {
-				g.PlayerWins()
-			}
-		case PAPER:
-
-			if computerValue == SCISSORS {
-				g.ComputerWins()
-			} else {
-				g.PlayerWins()
-			}
-		case SCISSORS:
-
-			if computerValue == ROCK {
-				g.ComputerWins()
-			} else {
-				g.PlayerWins()
-			}
-		default:
+		if playerValue == -1 {
 			g.DisplayChan <- "Invalid!"
 			<-g.DisplayChan
 			return false
+		} else if playerValue == (computerValue+1)%3 {
+			g.PlayerWins()
+		} else {
+			g.ComputerWins()
 		}
+
+		// switch playerValue {
+		// case ROCK:
+		// 	if computerValue == PAPER {
+		// 		g.ComputerWins()
+		// 	} else {
+		// 		g.PlayerWins()
+		// 	}
+		// case PAPER:
+
+		// 	if computerValue == SCISSORS {
+		// 		g.ComputerWins()
+		// 	} else {
+		// 		g.PlayerWins()
+		// 	}
+		// case SCISSORS:
+
+		// 	if computerValue == ROCK {
+		// 		g.ComputerWins()
+		// 	} else {
+		// 		g.PlayerWins()
+		// 	}
+		// default:
+		// 	g.DisplayChan <- "Invalid!"
+		// 	<-g.DisplayChan
+		// 	return false
+		// }
 	}
 	fmt.Println()
 	return true
